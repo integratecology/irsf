@@ -95,10 +95,10 @@ print(sTime)
   # plot(agde_crsf)
   
   check <- data.frame(sim_no = rep(sim_no, length(check$count)),
-                      agde_irsf = as.vector(agde_irsf@.Data[[1]]/sum(agde_irsf@.Data[[1]])), 
-                      agde_crsf = as.vector(agde_crsf@.Data[[1]]/sum(agde_crsf@.Data[[1]])), 
-                      emp_count = countr2@data@values)
-  check$emp_count = ifelse(is.na(check$emp_count), 0, check$emp_count)
+                      prob_irsf = as.vector(agde_irsf@.Data[[1]]/sum(agde_irsf@.Data[[1]])), 
+                      prob_crsf = as.vector(agde_crsf@.Data[[1]]/sum(agde_crsf@.Data[[1]])), 
+                      prob_emp = countr2@data@values)
+  check$emp_count = ifelse(is.na(check$prob_emp), 0, check$prob_emp)
   # quantile(check$count, probs = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
   # plot(check$count ~ check$agde, xlim=c(0,.012), ylim=c(0,.012), main = "Integrated",
   #      xlab="Probability Density (AGDE)", ylab="Probability Density (Movement Track)")
@@ -110,11 +110,11 @@ print(sTime)
   
   # Extract variables of interest ###
   # sim_no <- sim_no
-  cor_irsf <- cor(check$agde_irsf, check$emp_count, method = "pearson")
-  cor_crsf <-cor(check$agde_crsf, check$emp_count, method = "pearson")
-  kld_irsf <- LaplacesDemon::KLD(check$agde_irsf, check$emp_count)$sum.KLD.px.py
-  kld_crsf <- LaplacesDemon::KLD(check$agde_crsf, check$emp_count)$sum.KLD.px.py
-  kld_r2 <- exp(-LaplacesDemon::KLD(check$agde_irsf, check$emp_count)$sum.KLD.px.py/LaplacesDemon::KLD(check$agde_crsf, check$emp_count)$sum.KLD.px.py)
+  cor_irsf <- cor(check$prob_irsf, check$prob_emp, method = "pearson")
+  cor_crsf <-cor(check$prob_crsf, check$prob_emp, method = "pearson")
+  kld_irsf <- LaplacesDemon::KLD(check$prob_irsf, check$prob_emp)$sum.KLD.px.py
+  kld_crsf <- LaplacesDemon::KLD(check$prob_crsf, check$prob_emp)$sum.KLD.px.py
+  kld_r2 <- exp(-LaplacesDemon::KLD(check$prob_irsf, check$prob_emp)$sum.KLD.px.py/LaplacesDemon::KLD(check$prob_crsf, check$prob_emp)$sum.KLD.px.py)
   
   #################################
   # Vector of results to return
@@ -125,6 +125,6 @@ print(sTime)
   write.table(check, 'results/area_cv_data.csv', append=TRUE, row.names=FALSE, col.names=FALSE, sep=',')
   
   # Print indicators of progress
-  print(pd)
+  print(sim_no)
   print(eTime)
   print(eTime - sTime)
