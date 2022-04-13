@@ -34,7 +34,7 @@ samp <- 24
 
 # Create raster
 r1 <- raster(nrows = 100, ncols = 100, xmn = -5000, xmx = 5000, ymn = -5000, ymx = 5000, 
-             vals = c(rep(1,9999),1.0000001)) # c(rep(1,800),rep(0,800))))
+             vals = rep(1,10000))
 projection(r1) <- "+proj=aeqd +lon_0=0 +lat_0=0 +datum=WGS84"
 
 # Record start time to monitor how long replicates take to compute
@@ -44,7 +44,7 @@ print(sTime)
 # Loop over sampling frequencies (samp)
   
   # Specify variables to manipulate sampling frequency while holding duration constant
-  nd <- 400 # number of days
+  nd <- 500 # number of days
   pd <- samp # [i] # number of sampled points per day
   
   # Sampling schedule
@@ -70,67 +70,59 @@ print(sTime)
   print("UD created")
   
   # Fit the iRSF ###
-  rsf <- ctmm:::rsf.fit(train, UD=ud, R=list(test=r1), debias=TRUE, error=0.1)
-  summary(rsf)
+  irsf <- ctmm:::rsf.fit(train, UD=ud, R=list(), debias=TRUE, error=0.1)
+  summary(irsf)
   print("Fitted iRSF") 
   
   # Fit the conventional RSF ###
-  rsf2 <- ctmm:::rsf.fit(train, UD=ud, R=list(test=r1), integrated = FALSE, debias=TRUE, error=0.1)
+  crsf <- ctmm:::rsf.fit(train, UD=ud, R=list(), integrated = FALSE, debias=TRUE, error=0.1)
   summary(rsf2)
   print("Fitted cRSF")
   
   # Check out AGDE of iRSF ###
-  AGDE <- agde(rsf, grid=r1)
-  # plot(AGDE)
-  # hist(AGDE@.Data[[1]][AGDE@.Data[[1]]!=0])
+  agde_irsf <- agde(irsf, grid=r1)
+  # plot(agde_irsf)
+  # hist(agde_irsf@.Data[[1]][agde_irsf@.Data[[1]]!=0])
   
   # Create raster of test set density ###
   sp <- SpatialPoints(test[2:3], proj4string=CRS("+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"))
   countr <- rasterize(sp, r1, fun='count')
   countr2 <- overlay(countr, fun = function(x){ x / length(test@.Data[[1]]) })
-  raster::plot(countr2)
+  # raster::plot(countr2)
   
+  # Check out AGDE of cRSF
+  agde_crsf <- agde(crsf, R=list(test=r1), grid=r1)
+  # plot(agde_crsf)
   
-  AGDE2 <- agde(rsf2, R=list(test=r1), grid=r1)
-  plot(AGDE2)
-  
-  check <- data.frame(agde = as.vector(AGDE@.Data[[1]]/sum(AGDE@.Data[[1]])), agde2 = as.vector(AGDE2@.Data[[1]]/sum(AGDE2@.Data[[1]])), count = countr2@data@values)
-  check$count = ifelse(is.na(check$count), 0, check$count)
-  check$log_agde <- log(check$agde)
-  check$log_agde2 <- log(check$agde2)
-  check$log_count <- log(check$count)
-  quantile(check$count, probs = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
-  plot(check$count ~ check$agde, xlim=c(0,.012), ylim=c(0,.012), main = "Integrated",
-       xlab="Probability Density (AGDE)", ylab="Probability Density (Movement Track)")
-  abline(a=0, b=1)
-  plot(check$count ~ check$agde2, xlim=c(0,.012), ylim=c(0,.012), main = "Conventional",
-       xlab="Probability Density (Uniform from AKDE)", ylab="Probability Density (Movement Track)")
-  abline(a=0, b=1)
-  cor(check$agde, check$count, method = "pearson")
-  cor(check$agde2, check$count, method = "pearson")
-  LaplacesDemon::KLD(check$agde, check$count)$sum.KLD.px.py
-  LaplacesDemon::KLD(check$agde2, check$count)$sum.KLD.px.py
-  exp(-LaplacesDemon::KLD(check$agde, check$count)$sum.KLD.px.py/LaplacesDemon::KLD(check$agde2, check$count)$sum.KLD.px.py)
-  
-  suit <- suitability(rsf, R=list(), grid=ud)
-  table(suit@data@values)
-  
+  check <- data.frame(sim_no = rep(sim_no, length(check$count)),
+                      agde_irsf = as.vector(agde_irsf@.Data[[1]]/sum(agde_irsf@.Data[[1]])), 
+                      agde_crsf = as.vector(agde_crsf@.Data[[1]]/sum(agde_crsf@.Data[[1]])), 
+                      emp_count = countr2@data@values)
+  check$emp_count = ifelse(is.na(check$emp_count), 0, check$emp_count)
+  # quantile(check$count, probs = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
+  # plot(check$count ~ check$agde, xlim=c(0,.012), ylim=c(0,.012), main = "Integrated",
+  #      xlab="Probability Density (AGDE)", ylab="Probability Density (Movement Track)")
+  # abline(a=0, b=1)
+  # plot(check$count ~ check$agde2, xlim=c(0,.012), ylim=c(0,.012), main = "Conventional",
+  #     xlab="Probability Density (Uniform from AKDE)", ylab="Probability Density (Movement Track)")
+  # abline(a=0, b=1)
   eTime <- Sys.time()
   
   # Extract variables of interest ###
-  sim_no <- sim_no
-  samp_freq <- pd
-  wrsf_coef <- summary(rsf)$CI[1,2]
-  wrsf_lcl <- summary(rsf)$CI[1,1]
-  wrsf_ucl <- summary(rsf)$CI[1,3]
-  runtime <- difftime(eTime, sTime, units="mins")
+  # sim_no <- sim_no
+  cor_irsf <- cor(check$agde_irsf, check$emp_count, method = "pearson")
+  cor_crsf <-cor(check$agde_crsf, check$emp_count, method = "pearson")
+  kld_irsf <- LaplacesDemon::KLD(check$agde_irsf, check$emp_count)$sum.KLD.px.py
+  kld_crsf <- LaplacesDemon::KLD(check$agde_crsf, check$emp_count)$sum.KLD.px.py
+  kld_r2 <- exp(-LaplacesDemon::KLD(check$agde_irsf, check$emp_count)$sum.KLD.px.py/LaplacesDemon::KLD(check$agde_crsf, check$emp_count)$sum.KLD.px.py)
   
   #################################
   # Vector of results to return
-  x <- data.frame(sim_no, samp_freq, wrsf_coef, wrsf_lcl, wrsf_ucl, runtime)
+  results <- data.frame(sim_no, cor_irsf, cor_crsf, kld_irsf, kld_crsf, kld_r2)
   
   # Store results in data.frame
-  write.table(x, 'results/final/wrsf_sim_results_lo_wrsf.csv', append=TRUE, row.names=FALSE, col.names=FALSE, sep=',') 
+  write.table(results, 'results/area_cv_summary.csv', append=TRUE, row.names=FALSE, col.names=FALSE, sep=',') 
+  write.table(check, 'results/area_cv_data.csv', append=TRUE, row.names=FALSE, col.names=FALSE, sep=',')
   
   # Print indicators of progress
   print(pd)
