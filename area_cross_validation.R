@@ -23,10 +23,6 @@ trueRngArea <- -2*log(0.05)*pi*sig
 mod <- ctmm(tau=c(ds,ds/6), isotropic=TRUE, sigma=sig, mu=c(0,0))
 
 # SIMULATION ####
-
-# Sampling frequencies to quantify
-samp <- 24
-
 # Create an empty data.frame for saving results
 # name_df <- c("sim_no","samp_freq", "wrsf_coef", "wrsf_lcl", "wrsf_ucl", "runtime")
 # df_sims <- array(rep(NaN), dim = c(0, length(name_df)))
@@ -44,8 +40,8 @@ print(sTime)
 # Loop over sampling frequencies (samp)
   
   # Specify variables to manipulate sampling frequency while holding duration constant
-  nd <- 500 # number of days
-  pd <- samp # [i] # number of sampled points per day
+  nd <- 1000 # number of days
+  pd <- 100 # number of sampled points per day
   
   # Sampling schedule
   st <- 1:(nd*pd)*(ds/pd) 
@@ -76,7 +72,7 @@ print(sTime)
   
   # Fit the conventional RSF ###
   crsf <- ctmm:::rsf.fit(train, UD=ud, R=list(), integrated = FALSE, debias=TRUE, error=0.1)
-  summary(rsf2)
+  summary(crsf)
   print("Fitted cRSF")
   
   # Check out AGDE of iRSF ###
