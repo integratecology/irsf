@@ -5,9 +5,9 @@ library(ctmm)
 
 # ANALYSIS ####
 # Read job number from command line
-# args = commandArgs(trailingOnly=TRUE)
-# sim_no <- args[1]
-# print(sim_no)
+args = commandArgs(trailingOnly=TRUE)
+sim_no <- args[1]
+print(sim_no)
 
 # Define the OUF model parameters ###
 # Length of a day in seconds
@@ -41,7 +41,7 @@ print(sTime)
   
   # Specify variables to manipulate sampling frequency while holding duration constant
   nd <- 1000 # number of days
-  pd <- 100 # number of sampled points per day
+  pd <- 24   # number of sampled points per day
   
   # Sampling schedule
   st <- 1:(nd*pd)*(ds/pd) 
@@ -90,11 +90,11 @@ print(sTime)
   agde_crsf <- agde(crsf, R=list(test=r1), grid=r1)
   # plot(agde_crsf)
   
-  check <- data.frame(sim_no = rep(sim_no, length(check$count)),
+  check <- data.frame(sim_no = rep(sim_no, length(as.vector(agde_irsf@.Data[[1]]))),
                       prob_irsf = as.vector(agde_irsf@.Data[[1]]/sum(agde_irsf@.Data[[1]])), 
                       prob_crsf = as.vector(agde_crsf@.Data[[1]]/sum(agde_crsf@.Data[[1]])), 
                       prob_emp = countr2@data@values)
-  check$emp_count = ifelse(is.na(check$prob_emp), 0, check$prob_emp)
+  check$prob_emp = ifelse(is.na(check$prob_emp), 0, check$prob_emp)
   # quantile(check$count, probs = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
   # plot(check$count ~ check$agde, xlim=c(0,.012), ylim=c(0,.012), main = "Integrated",
   #      xlab="Probability Density (AGDE)", ylab="Probability Density (Movement Track)")
