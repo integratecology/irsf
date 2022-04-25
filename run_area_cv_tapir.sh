@@ -30,14 +30,14 @@ if [ -f results/area_cv_summary_tapir.csv ]; then
 	echo "Results file already exists! continuing..."
 else
 	echo "creating results file area_cv_summary.csv"
-	echo "sim_no,cor_irsf,cor_crsf,kld_irsf,kld_crsf,kld_r2" > results/area_cv_summary_tapir.csv
+	echo "aid,ind_file,cor_irsf,cor_crsf,kld_irsf,kld_crsf,kld_r2" > results/area_cv_summary_tapir.csv
 fi
 
 if [ -f results/area_cv_data_tapir.csv ]; then
         echo "Results file already exists! continuing..."
 else
         echo "creating results file area_cv_data.csv"
-        echo "sim_no,prob_irsf,prob_crsf,emp_count" > results/area_cv_data_tapir.csv
+        echo "aid,prob_irsf,prob_crsf,emp_count" > results/area_cv_data_tapir.csv
 fi
 
 
