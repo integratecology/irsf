@@ -26,21 +26,21 @@ date
 echo "Initiating script"
 
 
-if [ -f results/area_cv_summary.csv ]; then
+if [ -f results/area_cv_summary_tapir.csv ]; then
 	echo "Results file already exists! continuing..."
 else
 	echo "creating results file area_cv_summary.csv"
-	echo "sim_no,cor_irsf,cor_crsf,kld_irsf,kld_crsf,kld_r2" > results/area_cv_summary.csv
+	echo "sim_no,cor_irsf,cor_crsf,kld_irsf,kld_crsf,kld_r2" > results/area_cv_summary_tapir.csv
 fi
 
-if [ -f results/area_cv_data.csv ]; then
+if [ -f results/area_cv_data_tapir.csv ]; then
         echo "Results file already exists! continuing..."
 else
         echo "creating results file area_cv_data.csv"
-        echo "sim_no,prob_irsf,prob_crsf,emp_count" > results/area_cv_data.csv
+        echo "sim_no,prob_irsf,prob_crsf,emp_count" > results/area_cv_data_tapir.csv
 fi
 
 
-Rscript area_cross_validation_sims.R ${SLURM_ARRAY_TASK_ID}     # name of script
+Rscript area_cross_validation_tapir.R ${SLURM_ARRAY_TASK_ID}     # name of script
 echo "Script complete"
 date
