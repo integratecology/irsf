@@ -41,6 +41,6 @@ else
 fi
 
 
-Rscript area_cross_validation.R ${SLURM_ARRAY_TASK_ID}     # name of script
+Rscript area_cross_validation_sims.R ${SLURM_ARRAY_TASK_ID}     # name of script
 echo "Script complete"
 date
