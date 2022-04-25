@@ -15,10 +15,9 @@ aid <- df$individual.local.identifier[1]
 
 l <- as.telemetry(df)
 
-# Load habitat raster (trees) and crop it to save some time and RAM
-r1 <- raster("data/pantanal_trees.tif")
-e <- extent(min(l$longitude) - 0.2, max(l$longitude) + 0.2, min(l$latitude) - 0.2, max(l$latitude) + 0.2)
-r2 <- crop(r1, e)
+r1 <- raster(nrows = 100, ncols = 100, xmn = -5000, xmx = 5000, ymn = -5000, ymx = 5000, 
+                 vals = rep(1,10000))
+projection(r1) <- ctmm::projection(irsf)
 
 # Record start time to monitor how long replicates take to compute
 sTime <- Sys.time()
@@ -53,6 +52,11 @@ summary(crsf)
 print("Fitted cRSF")
   
 # Check out AGDEs of fitted RSFs ###
+# Create a dummy raster for the AGDE grid #
+r1 <- raster(nrows = 100, ncols = 100, xmn = -5000, xmx = 5000, ymn = -5000, ymx = 5000, 
+                 vals = rep(1,10000))
+projection(r1) <- ctmm:::projection(irsf)
+
 # Integrated RSF #
 agde_irsf <- agde(irsf, grid=r1)
 # plot(agde_irsf)
@@ -63,7 +67,7 @@ agde_crsf <- agde(crsf, grid=r1)
 # plot(agde_crsf)
   
 # Create raster of test set density ###
-sp <- SpatialPoints(test[2:3], proj4string=CRS("+proj=aeqd +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"))
+sp <- SpatialPoints(test[6:7], proj4string=CRS(ctmm:::projection(irsf))
 countr <- rasterize(sp, r1, fun='count')
 countr2 <- overlay(countr, fun = function(x){ x / length(test@.Data[[1]]) })
 # raster::plot(countr2)
