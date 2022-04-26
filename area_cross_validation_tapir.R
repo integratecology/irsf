@@ -1,6 +1,7 @@
 # PACKAGES ####
 library(sp)
 library(raster)
+library(data.table)
 library(ctmm)
 
 # ANALYSIS ####
@@ -63,7 +64,7 @@ agde_crsf <- agde(crsf, grid=r1)
 # plot(agde_crsf)
   
 # Create raster of test set density ###
-sp <- SpatialPoints(test[6:7], proj4string=CRS(ctmm:::projection(irsf))
+sp <- SpatialPoints(test[6:7], proj4string=ctmm:::projection(irsf, asText=FALSE))
 countr <- rasterize(sp, r1, fun='count')
 countr2 <- overlay(countr, fun = function(x){ x / length(test@.Data[[1]]) })
 # raster::plot(countr2)
