@@ -22,6 +22,8 @@ module load R
 
 cd /home/alston92/proj/irsf   # where executable and data is located
 
+list=(/home/alston92/proj/irsf/data/*_r.csv)
+
 date
 echo "Initiating script"
 
@@ -41,6 +43,6 @@ else
 fi
 
 
-Rscript area_cross_validation_tapir.R ${SLURM_ARRAY_TASK_ID}     # name of script
+Rscript area_cross_validation_tapir.R ${list[SLURM_ARRAY_TASK_ID]}     # name of script
 echo "Script complete"
 date

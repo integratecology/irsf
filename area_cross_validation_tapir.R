@@ -15,10 +15,6 @@ aid <- df$individual.local.identifier[1]
 
 l <- as.telemetry(df)
 
-r1 <- raster(nrows = 100, ncols = 100, xmn = -5000, xmx = 5000, ymn = -5000, ymx = 5000, 
-                 vals = rep(1,10000))
-projection(r1) <- ctmm::projection(irsf)
-
 # Record start time to monitor how long replicates take to compute
 sTime <- Sys.time()
 print(sTime)
