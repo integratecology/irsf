@@ -6,7 +6,7 @@
 #SBATCH --ntasks-per-node=1        # number of tasks (i.e. parallel processes) to be started
 #SBATCH --cpus-per-task=1          # number of cpus required to run the script
 #SBATCH --mem-per-cpu=16G	   # memory required for process
-#SBATCH --array=1-15%15    	   # set number of total simulations and number that can run simultaneously	  
+#SBATCH --array=0-14%15    	   # set number of total simulations and number that can run simultaneously	  
 
 
 module load gcc
