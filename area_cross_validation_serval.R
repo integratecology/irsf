@@ -93,7 +93,7 @@ kld_r2 <- exp(-LaplacesDemon::KLD(check$prob_irsf, check$prob_emp)$sum.KLD.px.py
 # Create vector of results
 results <- data.frame(aid, ind_file, cor_irsf, cor_crsf, kld_irsf, kld_crsf, kld_r2)
   
-# Store results in data.frame
+# Store results in data.frames
 write.table(results, 'results/area_cv_summary_serval.csv', append=TRUE, row.names=FALSE, col.names=FALSE, sep=',') 
 write.table(check, 'results/area_cv_data_serval.csv', append=TRUE, row.names=FALSE, col.names=FALSE, sep=',')
   
