@@ -1,4 +1,4 @@
-lCKAGES ####
+# PACKAGES ####
 library(raster)
 library(ctmm)
 
@@ -87,7 +87,7 @@ summary(irsf)
 agde_irsf <- agde(irsf, grid=r1)  
 summary(agde_irsf)
 
-crsf - ctmm:::rsf.fit(train, UD=ud, R=list(test=1), debias=TRUE, error=0.01, integrated=FALSE)
+crsf <- ctmm:::rsf.fit(train, UD=ud, R=list(test=1), debias=TRUE, error=0.01, integrated=FALSE)
 summary(crsf)
 
 agde_crsf <- agde(crsf, grid=r1)
