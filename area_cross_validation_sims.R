@@ -93,8 +93,8 @@ agde_crsf_r <- raster(agde_crsf, DF="PMF")
 # plot(agde_crsf)
 
 check <- data.frame(sim_no = rep(sim_no, length(agde_irsf@data@values)),
-                    prob_irsf = agde_irsf_r@data@values), 
-                    prob_crsf = agde_crsf_r@data@values), 
+                    prob_irsf = agde_irsf_r@data@values, 
+                    prob_crsf = agde_crsf_r@data@values, 
                     prob_emp = countr2@data@values)
 check$prob_emp = ifelse(is.na(check$prob_emp), 0, check$prob_emp)
 # quantile(check$count, probs = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
