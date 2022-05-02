@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=irsf_area_cv    # name of the job
+#SBATCH --job-name=aic_comp_sims   # name of the job
 #SBATCH --partition=defq,intel     # partition to be used (defq, gpu or intel)
-#SBATCH --time=6:00:00             # walltime (up to 96 hours)
+#SBATCH --time=24:00:00             # walltime (up to 96 hours)
 #SBATCH --nodes=1                  # number of nodes
 #SBATCH --ntasks-per-node=1        # number of tasks (i.e. parallel processes) to be started
 #SBATCH --cpus-per-task=1          # number of cpus required to run the script
-#SBATCH --mem-per-cpu=16G	   # memory required for process
+#SBATCH --mem-per-cpu=32G	   # memory required for process
 #SBATCH --array=1-400%125    	   # set number of total simulations and number that can run simultaneously	  
 
 
@@ -26,21 +26,14 @@ date
 echo "Initiating script"
 
 
-if [ -f results/area_cv_summary_sims.csv ]; then
+if [ -f results/aic_comparison_sims.csv ]; then
 	echo "Results file already exists! continuing..."
 else
-	echo "creating results file area_cv_summary.csv"
-	echo "sim_no,cor_irsf,cor_crsf,kld_irsf,kld_crsf,kld_r2" > results/area_cv_summary_sims.csv
-fi
-
-if [ -f results/area_cv_data_sims.csv ]; then
-        echo "Results file already exists! continuing..."
-else
-        echo "creating results file area_cv_data.csv"
-        echo "sim_no,prob_irsf,prob_crsf,emp_count" > results/area_cv_data_sims.csv
+	echo "creating results file"
+	echo "sim_no, irsf_est, irsf_lcl, irsf_ucl, crsf_est, crsf_lcl, crsf_ucl, best_mod, delta_aic, habitat1, habitat2, cv_ll_irsf, cv_ll_crsf, runtime" > results/aic_comparison_sims.csv
 fi
 
 
-Rscript area_cross_validation_sims.R ${SLURM_ARRAY_TASK_ID}     # name of script
+Rscript aic_comparison_sims.R ${SLURM_ARRAY_TASK_ID}     # name of script
 echo "Script complete"
 date
