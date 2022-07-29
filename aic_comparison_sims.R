@@ -85,13 +85,13 @@ irsf <- ctmm:::rsf.fit(train, UD=ud, R=list(test=r1), debias=TRUE, error=0.01)
 summary(irsf)
 
 agde_irsf <- agde(irsf, grid=r1)  
-summary(agde_irsf)
+print("AGDE created with iRSF")
 
-crsf <- ctmm:::rsf.fit(train, UD=ud, R=list(test=1), debias=TRUE, error=0.01, integrated=FALSE)
+crsf <- ctmm:::rsf.fit(train, UD=ud, R=list(test=r1), debias=TRUE, error=0.01, integrated=FALSE)
 summary(crsf)
 
 agde_crsf <- agde(crsf, grid=r1)
-summary(agde_irsf)
+print("AGDE created with cRSF")
 
 aic_comp <- summary(list(irsf=irsf, crsf=crsf))
 
